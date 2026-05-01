@@ -17,7 +17,7 @@ public class ExpenseController {
         this.repo = repo;
     }
 
-    // ✅ TEST API (NEW - FOR DEBUG)
+    // ✅ TEST API
     @GetMapping("/ping")
     public String ping() {
         return "OK";
