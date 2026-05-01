@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/expenses")
-@CrossOrigin(origins = "*")  // ✅ THIS LINE IS REQUIRED
+@CrossOrigin(origins = "*")
 public class ExpenseController {
 
     private final ExpenseRepository repo;
@@ -17,19 +17,25 @@ public class ExpenseController {
         this.repo = repo;
     }
 
-    // GET ALL
+    // ✅ TEST API (NEW - FOR DEBUG)
+    @GetMapping("/ping")
+    public String ping() {
+        return "OK";
+    }
+
+    // ✅ GET ALL
     @GetMapping
     public List<Expense> getAll() {
         return repo.findAll();
     }
 
-    // ADD
+    // ✅ ADD
     @PostMapping
     public Expense add(@RequestBody Expense expense) {
         return repo.save(expense);
     }
 
-    // UPDATE
+    // ✅ UPDATE
     @PutMapping("/{id}")
     public Expense update(@PathVariable Long id, @RequestBody Expense updated) {
         Expense exp = repo.findById(id).orElseThrow();
@@ -40,7 +46,7 @@ public class ExpenseController {
         return repo.save(exp);
     }
 
-    // DELETE
+    // ✅ DELETE
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         repo.deleteById(id);
