@@ -1,85 +1,131 @@
 import { useState } from "react";
-import { FaRupeeSign, FaTag } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { useExpense } from "../context/ExpenseContext";
 
-export default function ExpenseForm({ addExpense }) {
+export default function ExpenseForm() {
+  const { addExpense } = useExpense();
+
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Food");
+  const [focused, setFocused] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!amount || amount <= 0) {
-      alert("Enter valid amount");
+    // ✅ VALIDATION (VERY IMPORTANT)
+    const numericAmount = Number(amount);
+
+    if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
+      alert("Enter a valid amount");
       return;
     }
 
-    const expense = {
-      id: Date.now(),
-      amount: Number(amount),
-      category,
-    };
-
-    addExpense(expense);
+    addExpense({
+      amount: numericAmount,          // ✅ always number
+      category: category.trim(),      // ✅ clean string
+    });
 
     setAmount("");
     setCategory("Food");
   };
 
+  // 🎨 Category colors
+  const categoryColors = {
+    Food: "bg-orange-500",
+    Travel: "bg-blue-500",
+    Bills: "bg-yellow-500",
+  };
+
   return (
-    <motion.form
+    <form
       onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg mt-6"
+      className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl mt-4 transition"
     >
-      <h2 className="text-xl font-bold mb-4 text-black dark:text-white">
+      <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">
         Add Expense
       </h2>
 
-      {/* Amount Field */}
-      <div className="relative mb-4">
-        <FaRupeeSign className="absolute left-3 top-3 text-gray-400" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full pl-10 p-3 border rounded-lg 
-          bg-white text-black 
-          dark:bg-gray-800 dark:text-white 
-          focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter amount"
-        />
-      </div>
+        {/* AMOUNT INPUT */}
+        <div className="relative">
+          <input
+            type="number"
+            value={amount}
+            onFocus={() => setFocused("amount")}
+            onBlur={() => setFocused("")}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full p-4 pt-6 rounded-xl border border-gray-300 dark:border-gray-600 
+                       bg-gray-50 dark:bg-gray-700 
+                       text-gray-800 dark:text-white 
+                       focus:ring-2 focus:ring-blue-500 outline-none transition"
+          />
 
-      {/* Category Field */}
-      <div className="relative mb-4">
-        <FaTag className="absolute left-3 top-3 text-gray-400" />
+          <label
+            className={`absolute left-3 transition-all text-gray-500 dark:text-gray-300
+              ${
+                amount || focused === "amount"
+                  ? "top-1 text-xs text-blue-500"
+                  : "top-4 text-sm"
+              }`}
+          >
+            Amount
+          </label>
+        </div>
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full pl-10 p-3 border rounded-lg 
-          bg-white text-black 
-          dark:bg-gray-800 dark:text-white 
-          focus:outline-none focus:ring-2 focus:ring-blue-500"
+        {/* CATEGORY SELECT */}
+        <div className="relative">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            onFocus={() => setFocused("category")}
+            onBlur={() => setFocused("")}
+            className="w-full p-4 pt-6 rounded-xl border border-gray-300 dark:border-gray-600 
+                       bg-gray-50 dark:bg-gray-700 
+                       text-gray-800 dark:text-white
+                       focus:ring-2 focus:ring-blue-500 outline-none transition"
+          >
+            <option value="Food">🍔 Food</option>
+            <option value="Travel">✈️ Travel</option>
+            <option value="Bills">💡 Bills</option>
+          </select>
+
+          <label
+            className={`absolute left-3 transition-all text-gray-500 dark:text-gray-300
+              ${
+                focused === "category"
+                  ? "top-1 text-xs text-blue-500"
+                  : "top-4 text-sm"
+              }`}
+          >
+            Category
+          </label>
+        </div>
+
+        {/* BUTTON */}
+        <button
+          type="submit"
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:scale-105 
+                     text-white font-semibold rounded-xl px-4 py-3 
+                     transition shadow-lg"
         >
-          <option>Food</option>
-          <option>Travel</option>
-          <option>Bills</option>
-        </select>
+          Add Expense
+        </button>
       </div>
 
-      {/* Button */}
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        whileHover={{ scale: 1.02 }}
-        type="submit"
-        className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-      >
-        Add Expense
-      </motion.button>
-    </motion.form>
+      {/* CATEGORY BADGE */}
+      <div className="mt-5 flex items-center gap-3">
+        <span className="text-sm text-gray-500 dark:text-gray-300">
+          Selected:
+        </span>
+
+        <span
+          className={`px-3 py-1 text-white rounded-full text-sm ${
+            categoryColors[category]
+          }`}
+        >
+          {category}
+        </span>
+      </div>
+    </form>
   );
 }
