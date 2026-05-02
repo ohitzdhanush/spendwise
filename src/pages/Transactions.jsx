@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { motion } from "framer-motion";
 import ExpenseList from "../components/ExpenseList";
 import FilterBar from "../components/FilterBar";
@@ -37,3 +38,13 @@ export default function Transactions() {
     </MotionPage>
   );
 }
+=======
+    export default function Transactions() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">Transactions Page</h1>
+      <p>All your expenses will appear here.</p>
+    </div>
+  );
+}
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

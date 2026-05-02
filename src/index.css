@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+<<<<<<< HEAD
 
 :root {
   color: #111827;
@@ -189,3 +190,8 @@ button:disabled {
     transition-duration: 0.01ms !important;
   }
 }
+=======
+body {
+  font-family: 'Inter', sans-serif;
+}
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

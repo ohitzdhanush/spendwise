@@ -1,3 +1,38 @@
+<<<<<<< HEAD
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+=======
 # Logs
 logs
 *.log
@@ -11,9 +46,6 @@ node_modules
 dist
 dist-ssr
 *.local
-.env
-.env.*
-!.env.example
 
 # Editor directories and files
 .vscode/*
@@ -25,3 +57,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+>>>>>>> 8b7a0b7baa485ed091346c93a4a9b4d3afc3aa18

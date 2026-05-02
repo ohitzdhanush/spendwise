@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import { AuthContext } from "./auth-context";
 
@@ -41,11 +42,60 @@ export function AuthProvider({ children }) {
     localStorage.setItem("spendwiseUser", JSON.stringify(session));
     setUser(session);
     return { ok: true };
+=======
+import { createContext, useContext, useEffect, useState } from "react";
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    try {
+      const current = JSON.parse(localStorage.getItem("currentUser"));
+      if (current) setUser(current);
+    } catch {
+      setUser(null);
+    }
+  }, []);
+
+  const signup = (email, password) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const exists = users.find((u) => u.email === email);
+    if (exists) return false;
+
+    const newUser = { email, password };
+    users.push(newUser);
+
+    localStorage.setItem("users", JSON.stringify(users));
+    return true;
+  };
+
+  const login = (email, password) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const found = users.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (found) {
+      localStorage.setItem("currentUser", JSON.stringify(found));
+      setUser(found);
+      return true;
+    }
+
+    return false;
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   };
 
   const logout = () => {
     setUser(null);
+<<<<<<< HEAD
     localStorage.removeItem("spendwiseUser");
+=======
+    localStorage.removeItem("currentUser");
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   };
 
   return (
@@ -54,3 +104,10 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+<<<<<<< HEAD
+=======
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

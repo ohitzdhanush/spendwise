@@ -4,23 +4,59 @@ import {
   CategoryScale,
   Chart as ChartJS,
   Legend,
+<<<<<<< HEAD
+=======
+} from "chart.js";
+
+import { Pie, Bar } from "react-chartjs-2";
+import { useExpense } from "../context/ExpenseContext";
+
+ChartJS.register(
+  ArcElement,
+  BarElement,
+  CategoryScale,
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   LinearScale,
   Tooltip,
 } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { motion } from "framer-motion";
 import { categories } from "../constants/expenses";
-import { riseIn } from "../utils/motion";
+import { riseIn } from "./Motion";
 
+<<<<<<< HEAD
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+=======
+export default function ChartSection() {
+  const { expenses } = useExpense();
+
+  if (!expenses || expenses.length === 0) {
+    return (
+      <p className="text-gray-400 text-center mt-4">
+        No data for chart
+      </p>
+    );
+  }
+
+  const categories = ["Food", "Travel", "Bills"];
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
 
 const palette = ["#0891b2", "#4f46e5", "#0f766e", "#9333ea", "#e11d48", "#2563eb", "#64748b"];
 
 export default function ChartSection({ expenses, compact = false }) {
   const totals = categories.map((category) =>
     expenses
+<<<<<<< HEAD
       .filter((expense) => expense.category === category)
       .reduce((sum, expense) => sum + expense.amount, 0)
+=======
+      .filter(
+        (e) =>
+          e.category &&
+          e.category.toLowerCase() === cat.toLowerCase()
+      )
+      .reduce((sum, e) => sum + Number(e.amount), 0)
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   );
 
   const hasData = totals.some((value) => value > 0);
@@ -37,6 +73,7 @@ export default function ChartSection({ expenses, compact = false }) {
     ],
   };
 
+<<<<<<< HEAD
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -49,6 +86,15 @@ export default function ChartSection({ expenses, compact = false }) {
           useBorderRadius: true,
           font: { family: "Inter" },
         },
+=======
+  const barData = {
+    labels: categories,
+    datasets: [
+      {
+        label: "Expenses",
+        data: dataValues,
+        backgroundColor: "#6366f1",
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
       },
     },
   };
@@ -67,6 +113,7 @@ export default function ChartSection({ expenses, compact = false }) {
   }
 
   return (
+<<<<<<< HEAD
     <div className={`grid gap-4 ${compact ? "lg:grid-cols-2" : "lg:grid-cols-2"}`}>
       <motion.div className="surface animated-panel p-4" variants={riseIn}>
         <h2 className="font-bold text-slate-950">Category Share</h2>
@@ -90,6 +137,18 @@ export default function ChartSection({ expenses, compact = false }) {
           />
         </div>
       </motion.div>
+=======
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <div className="bg-gray-800 p-4 rounded shadow">
+        <h2 className="text-white mb-2">Category Distribution</h2>
+        <Pie data={pieData} />
+      </div>
+
+      <div className="bg-gray-800 p-4 rounded shadow">
+        <h2 className="text-white mb-2">Spending Overview</h2>
+        <Bar data={barData} />
+      </div>
+>>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
     </div>
   );
 }
