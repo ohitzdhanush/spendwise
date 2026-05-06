@@ -1,6 +1,7 @@
 package com.spendwise.model;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "expenses")
@@ -12,8 +13,17 @@ public class Expense {
 
     private double amount;
     private String category;
+    private OffsetDateTime createdAt;
+    private Long userId;
 
     public Expense() {}
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -33,5 +43,21 @@ public class Expense {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

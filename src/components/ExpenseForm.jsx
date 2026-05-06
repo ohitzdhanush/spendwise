@@ -1,29 +1,5 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { FaPlus } from "react-icons/fa";
-import { motion } from "framer-motion";
-import { categories } from "../constants/expenses";
-import { useExpense } from "../context/useExpense";
-import { riseIn } from "./Motion";
-
-function toDateTimeInputValue(date = new Date()) {
-  const offset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
-
-export default function ExpenseForm() {
-  const { addExpense, loading } = useExpense();
-  const [form, setForm] = useState({
-    amount: "",
-    category: "Food",
-    dateTime: toDateTimeInputValue(),
-    note: "",
-  });
-
-  const updateField = (field, value) => {
-    setForm((current) => ({ ...current, [field]: value }));
-  };
-=======
+import { FaPlus } from "react-icons/fa6";
 import { useExpense } from "../context/ExpenseContext";
 
 export default function ExpenseForm() {
@@ -32,121 +8,43 @@ export default function ExpenseForm() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Food");
   const [focused, setFocused] = useState("");
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.amount || Number(form.amount) <= 0) return;
-    const submittedAt = new Date(form.dateTime).toISOString();
 
-<<<<<<< HEAD
-    addExpense({
-      title: form.category,
-      amount: Number(form.amount),
-      category: form.category,
-      date: submittedAt,
-      dateTime: submittedAt,
-      submittedAt,
-      createdAt: submittedAt,
-      note: form.note,
-    });
-
-    setForm({
-      amount: "",
-      category: "Food",
-      dateTime: toDateTimeInputValue(),
-      note: "",
-    });
-=======
-    // ✅ VALIDATION (VERY IMPORTANT)
     const numericAmount = Number(amount);
 
-    if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
+    if (!amount || Number.isNaN(numericAmount) || numericAmount <= 0) {
       alert("Enter a valid amount");
       return;
     }
 
     addExpense({
-      amount: numericAmount,          // ✅ always number
-      category: category.trim(),      // ✅ clean string
+      amount: numericAmount,
+      category: category.trim(),
+      createdAt: new Date().toISOString(),
     });
 
     setAmount("");
     setCategory("Food");
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   };
 
-  // 🎨 Category colors
   const categoryColors = {
-    Food: "bg-orange-500",
-    Travel: "bg-blue-500",
-    Bills: "bg-yellow-500",
+    Food: "bg-amber-500",
+    Travel: "bg-sky-500",
+    Bills: "bg-violet-500",
   };
 
   return (
-<<<<<<< HEAD
-    <motion.form onSubmit={handleSubmit} className="surface animated-panel p-4" variants={riseIn}>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="text-base font-bold text-slate-950">Add Expense</h2>
-          <p className="text-sm text-slate-500">Capture amount, category, date, and time.</p>
-        </div>
-        <motion.button
-          type="submit"
-          className="btn-primary"
-          disabled={loading}
-          whileTap={{ scale: 0.96 }}
-        >
-          <FaPlus className="h-3.5 w-3.5" />
-          Add
-        </motion.button>
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <select
-          className="field"
-          value={form.category}
-          onChange={(e) => updateField("category", e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category}>{category}</option>
-          ))}
-        </select>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          className="field"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={(e) => updateField("amount", e.target.value)}
-        />
-        <input
-          type="datetime-local"
-          className="field"
-          value={form.dateTime}
-          onChange={(e) => updateField("dateTime", e.target.value)}
-        />
-        <input
-          className="field sm:col-span-2"
-          placeholder="Note"
-          value={form.note}
-          onChange={(e) => updateField("note", e.target.value)}
-        />
-      </div>
-    </motion.form>
-=======
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl mt-4 transition"
+      className="rounded-3xl border border-white/80 bg-white/90 p-5 shadow-xl shadow-slate-900/5 backdrop-blur transition dark:border-slate-800 dark:bg-slate-900/85 sm:p-6"
     >
-      <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">
+      <h2 className="mb-5 text-xl font-extrabold text-slate-950 dark:text-white">
         Add Expense
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-        {/* AMOUNT INPUT */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr_auto]">
         <div className="relative">
           <input
             type="number"
@@ -154,79 +52,62 @@ export default function ExpenseForm() {
             onFocus={() => setFocused("amount")}
             onBlur={() => setFocused("")}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-4 pt-6 rounded-xl border border-gray-300 dark:border-gray-600 
-                       bg-gray-50 dark:bg-gray-700 
-                       text-gray-800 dark:text-white 
-                       focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 pt-5 text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
           />
 
           <label
-            className={`absolute left-3 transition-all text-gray-500 dark:text-gray-300
-              ${
-                amount || focused === "amount"
-                  ? "top-1 text-xs text-blue-500"
-                  : "top-4 text-sm"
-              }`}
+            className={`absolute left-4 transition-all text-slate-500 dark:text-slate-300 ${
+              amount || focused === "amount"
+                ? "top-2 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-600"
+                : "top-4 text-sm"
+            }`}
           >
             Amount
           </label>
         </div>
 
-        {/* CATEGORY SELECT */}
         <div className="relative">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             onFocus={() => setFocused("category")}
             onBlur={() => setFocused("")}
-            className="w-full p-4 pt-6 rounded-xl border border-gray-300 dark:border-gray-600 
-                       bg-gray-50 dark:bg-gray-700 
-                       text-gray-800 dark:text-white
-                       focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 pt-5 text-slate-950 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
           >
-            <option value="Food">🍔 Food</option>
-            <option value="Travel">✈️ Travel</option>
-            <option value="Bills">💡 Bills</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Bills">Bills</option>
           </select>
 
           <label
-            className={`absolute left-3 transition-all text-gray-500 dark:text-gray-300
-              ${
-                focused === "category"
-                  ? "top-1 text-xs text-blue-500"
-                  : "top-4 text-sm"
-              }`}
+            className={`absolute left-4 transition-all text-slate-500 dark:text-slate-300 ${
+              focused === "category" || category
+                ? "top-2 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-600"
+                : "top-4 text-sm"
+            }`}
           >
             Category
           </label>
         </div>
 
-        {/* BUTTON */}
         <button
           type="submit"
-          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:scale-105 
-                     text-white font-semibold rounded-xl px-4 py-3 
-                     transition shadow-lg"
+          className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 font-bold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600 md:min-w-40"
         >
+          <FaPlus />
           Add Expense
         </button>
       </div>
 
-      {/* CATEGORY BADGE */}
-      <div className="mt-5 flex items-center gap-3">
-        <span className="text-sm text-gray-500 dark:text-gray-300">
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className="text-sm font-medium text-slate-500 dark:text-slate-300">
           Selected:
         </span>
 
-        <span
-          className={`px-3 py-1 text-white rounded-full text-sm ${
-            categoryColors[category]
-          }`}
-        >
+        <span className={`rounded-full px-3 py-1 text-sm font-bold text-white ${categoryColors[category]}`}>
           {category}
         </span>
       </div>
     </form>
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
   );
 }

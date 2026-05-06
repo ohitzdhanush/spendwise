@@ -1,122 +1,12 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { FaArrowRight, FaWallet } from "react-icons/fa6";
-import { MotionPage } from "../components/Motion";
-import { useAuth } from "../context/useAuth";
-=======
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
 
 export default function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-    const result = signup(email, password);
-
-    if (result.ok) {
-      navigate("/login");
-      return;
-    }
-
-    setMessage(result.message);
-  };
-
-  return (
-    <MotionPage className="min-h-screen bg-slate-50">
-      <div className="grid min-h-screen lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="flex items-center justify-center px-4 py-10">
-          <motion.form
-            onSubmit={handleSignup}
-            className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl shadow-cyan-950/5"
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45 }}
-          >
-            <div className="grid h-11 w-11 place-items-center rounded-lg bg-cyan-600 text-white">
-              <FaWallet />
-            </div>
-            <h2 className="mt-6 text-2xl font-black text-slate-950">Create account</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Start tracking expenses with a local frontend session.
-            </p>
-
-            {message && (
-              <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
-                {message}
-              </div>
-            )}
-
-            <div className="mt-6 space-y-3">
-              <input
-                className="field"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                className="field"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="btn-primary mt-5 w-full">
-              Sign up
-              <FaArrowRight className="h-3.5 w-3.5" />
-            </button>
-
-            <p className="mt-5 text-center text-sm text-slate-500">
-              Already have an account?{" "}
-              <Link to="/login" className="font-bold text-cyan-700 hover:text-cyan-800">
-                Login
-              </Link>
-            </p>
-          </motion.form>
-        </section>
-
-        <section className="auth-motion-bg relative hidden overflow-hidden px-10 py-12 text-white lg:flex lg:flex-col lg:justify-end">
-          <motion.div
-            className="float-soft absolute left-16 top-20 h-24 w-24 rounded-full border border-cyan-300/20 bg-cyan-300/10"
-            aria-hidden="true"
-          />
-          <motion.div
-            className="float-soft absolute bottom-20 right-16 h-32 w-32 rounded-full border border-indigo-300/20 bg-indigo-300/10"
-            aria-hidden="true"
-          />
-          <motion.div
-            className="relative max-w-xl"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12, duration: 0.55 }}
-          >
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-200">
-              Built for clarity
-            </p>
-            <h1 className="mt-4 text-5xl font-black leading-tight">
-              Turn every transaction into a better decision.
-            </h1>
-            <p className="mt-5 text-lg text-slate-300">
-              Your Render backend powers the expense data while this frontend keeps it fast and beautiful.
-            </p>
-          </motion.div>
-        </section>
-      </div>
-    </MotionPage>
-  );
-}
-=======
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,35 +16,66 @@ export default function Signup() {
 
     if (success) {
       navigate("/login");
+    } else {
+      alert("Account already exists");
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="bg-white p-6 rounded shadow w-80">
-        <h2 className="text-xl font-bold mb-4">Signup</h2>
+    <main className="animated-grid flex min-h-screen items-center justify-center bg-[#eef4f8] px-4 py-8">
+      <motion.section
+        initial={{ opacity: 0, y: 18, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl shadow-slate-900/15 sm:p-8"
+      >
+        <div className="mb-8 flex items-center gap-3">
+          <div className="soft-shine flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-white">
+            <FaWallet />
+          </div>
+          <div>
+            <p className="text-xl font-extrabold text-slate-950">SpendWise</p>
+            <p className="text-sm font-medium text-slate-500">Create your workspace</p>
+          </div>
+        </div>
 
-        <input
-          className="w-full p-2 border mb-2"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <h2 className="text-3xl font-extrabold text-slate-950">Signup</h2>
+        <p className="mt-2 text-sm font-medium text-slate-500">
+          Start tracking your expenses in minutes.
+        </p>
 
-        <input
-          type="password"
-          className="w-full p-2 border mb-2"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="mt-8 space-y-4">
+          <input
+            type="email"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+            placeholder="Email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
 
-        <button
-          onClick={handleSignup}
-          className="bg-green-600 text-white w-full p-2"
-        >
-          Signup
-        </button>
-      </div>
-    </div>
+          <input
+            type="password"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+            placeholder="Password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+
+          <button
+            type="button"
+            onClick={handleSignup}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
+          >
+            Create Account <FaArrowRight />
+          </button>
+        </div>
+
+        <p className="mt-6 text-center text-sm font-medium text-slate-500">
+          Already have an account?{" "}
+          <Link to="/login" className="font-extrabold text-emerald-700">
+            Login
+          </Link>
+        </p>
+      </motion.section>
+    </main>
   );
 }
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

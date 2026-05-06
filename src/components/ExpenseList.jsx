@@ -1,203 +1,7 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaCheck, FaPen, FaTrash, FaXmark } from "react-icons/fa6";
-import { categories } from "../constants/expenses";
-import { useExpense } from "../context/useExpense";
-import { riseIn } from "../utils/motion";
-
-const currency = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-  maximumFractionDigits: 0,
-});
-
-function formatDateTime(date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  }).format(new Date(date));
-}
-
-function toDateTimeInputValue(value) {
-  const date = new Date(value);
-  const offset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
-
-export default function ExpenseList({ limit }) {
-  const { filtered, deleteExpense, updateExpense, loading } = useExpense();
-  const [editId, setEditId] = useState(null);
-  const [draft, setDraft] = useState({});
-  const visibleExpenses = limit ? filtered.slice(0, limit) : filtered;
-
-  const startEdit = (expense) => {
-    setEditId(expense.id);
-    setDraft({
-      amount: expense.amount,
-      category: expense.category,
-      dateTime: toDateTimeInputValue(expense.submittedAt || expense.dateTime || expense.date),
-      note: expense.note,
-    });
-  };
-
-  const updateDraft = (field, value) => {
-    setDraft((current) => ({ ...current, [field]: value }));
-  };
-
-  const saveEdit = () => {
-    const submittedAt = new Date(draft.dateTime).toISOString();
-    updateExpense(editId, {
-      ...draft,
-      title: draft.category,
-      amount: Number(draft.amount),
-      date: submittedAt,
-      dateTime: submittedAt,
-      submittedAt,
-      createdAt: submittedAt,
-    });
-    setEditId(null);
-    setDraft({});
-  };
-
-  if (loading && filtered.length === 0) {
-    return (
-      <div className="surface p-6">
-        <div className="h-5 w-40 animate-pulse rounded bg-slate-200" />
-        <div className="mt-4 space-y-3">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="h-16 animate-pulse rounded-lg bg-slate-100" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <motion.div className="surface overflow-hidden" variants={riseIn}>
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <h2 className="font-bold text-slate-950">Expenses</h2>
-        <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
-          {visibleExpenses.length}
-        </span>
-      </div>
-
-      {visibleExpenses.length === 0 ? (
-        <motion.div
-          className="px-4 py-12 text-center"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <p className="font-bold text-slate-900">No expenses found</p>
-          <p className="mt-1 text-sm text-slate-500">
-            Add a new expense or clear filters to see more activity.
-          </p>
-        </motion.div>
-      ) : (
-        <div className="divide-y divide-slate-100">
-          <AnimatePresence initial={false}>
-            {visibleExpenses.map((expense) => (
-            <motion.div
-              key={expense.id}
-              className="grid gap-3 px-4 py-4 transition-colors hover:bg-cyan-50/40 lg:grid-cols-[1.4fr_1fr_0.8fr_auto] lg:items-center"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -18 }}
-              layout
-            >
-              {editId === expense.id ? (
-                <>
-                  <select
-                    className="field"
-                    value={draft.category}
-                    onChange={(e) => updateDraft("category", e.target.value)}
-                  >
-                    {categories.map((category) => (
-                      <option key={category}>{category}</option>
-                    ))}
-                  </select>
-                  <input
-                    className="field"
-                    value={draft.note}
-                    placeholder="Note"
-                    onChange={(e) => updateDraft("note", e.target.value)}
-                  />
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <input
-                      type="number"
-                      className="field"
-                      value={draft.amount}
-                      onChange={(e) => updateDraft("amount", e.target.value)}
-                    />
-                    <input
-                      type="datetime-local"
-                      className="field"
-                      value={draft.dateTime}
-                      onChange={(e) => updateDraft("dateTime", e.target.value)}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <button type="button" onClick={saveEdit} className="btn-primary" aria-label="Save">
-                      <FaCheck />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditId(null)}
-                      className="btn-secondary"
-                      aria-label="Cancel"
-                    >
-                      <FaXmark />
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <p className="font-bold text-slate-950">{expense.category}</p>
-                    <p className="mt-1 line-clamp-1 text-sm text-slate-500">
-                      {expense.note || "No note added"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mt-2 text-sm text-slate-500">
-                      {formatDateTime(expense.submittedAt || expense.dateTime || expense.date)}
-                    </p>
-                  </div>
-                  <p className="text-lg font-black text-slate-950">
-                    {currency.format(expense.amount)}
-                  </p>
-                  <div className="flex justify-start gap-2 lg:justify-end">
-                    <button
-                      type="button"
-                      onClick={() => startEdit(expense)}
-                      className="btn-secondary"
-                      aria-label="Edit expense"
-                    >
-                      <FaPen />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteExpense(expense.id)}
-                      className="btn-secondary text-red-600 hover:border-red-200 hover:bg-red-50"
-                      aria-label="Delete expense"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </>
-              )}
-            </motion.div>
-          ))}
-          </AnimatePresence>
-        </div>
-=======
+import { FaCalendarDays, FaPen, FaTrash } from "react-icons/fa6";
 import { useExpense } from "../context/ExpenseContext";
-import { useState } from "react";
-import { motion } from "framer-motion";
 
 export default function ExpenseList() {
   const { filtered, deleteExpense, updateExpense, loading } = useExpense();
@@ -206,102 +10,158 @@ export default function ExpenseList() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Food");
 
-  const getIcon = (category) => {
-    if (category === "Food") return "🍔";
-    if (category === "Travel") return "✈️";
-    if (category === "Bills") return "💡";
-    return "💸";
+  const getAccent = (itemCategory) => {
+    if (itemCategory === "Food") return "bg-amber-100 text-amber-700";
+    if (itemCategory === "Travel") return "bg-sky-100 text-sky-700";
+    if (itemCategory === "Bills") return "bg-violet-100 text-violet-700";
+    return "bg-emerald-100 text-emerald-700";
   };
 
-  const startEdit = (e) => {
-    setEditId(e.id);
-    setAmount(e.amount);
-    setCategory(e.category);
+  const formatSubmittedAt = (value) => {
+    if (!value) return "Date not available";
+
+    const submittedAt = new Date(value);
+    if (Number.isNaN(submittedAt.getTime())) return "Date not available";
+
+    return new Intl.DateTimeFormat("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(submittedAt);
+  };
+
+  const startEdit = (expense) => {
+    setEditId(expense.id);
+    setAmount(expense.amount);
+    setCategory(expense.category);
   };
 
   const saveEdit = () => {
+    const numericAmount = Number(amount);
+    if (!numericAmount || Number.isNaN(numericAmount) || numericAmount <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
+
     updateExpense(editId, {
-      amount: Number(amount),
+      amount: numericAmount,
       category,
     });
     setEditId(null);
   };
 
   if (loading) {
-    return <p className="animate-pulse text-gray-400">Loading...</p>;
+    return (
+      <div className="rounded-3xl border border-white/80 bg-white/85 p-5 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900/85">
+        <p className="animate-pulse text-slate-500">Loading expenses...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-4 space-y-3">
-      <h2 className="text-lg font-bold">Expenses</h2>
+    <section className="rounded-3xl border border-white/80 bg-white/85 p-4 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/85 sm:p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Expenses</h2>
+          <p className="text-sm font-medium text-slate-500">{filtered.length} records found</p>
+        </div>
+      </div>
 
       {filtered.length === 0 ? (
-        <p>No expenses found</p>
+        <div className="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500 dark:border-slate-700">
+          No expenses found.
+        </div>
       ) : (
-        filtered.map((e) => (
-          <motion.div
-            key={e.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-xl shadow hover:shadow-lg transition"
-          >
-            {editId === e.id ? (
-              <>
-                <input
-                  value={amount}
-                  onChange={(ev) => setAmount(ev.target.value)}
-                  className="border p-2 rounded"
-                />
+        <div className="space-y-3">
+          <AnimatePresence initial={false}>
+            {filtered.map((expense) => (
+              <motion.div
+                key={expense.id}
+                layout
+                initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950"
+              >
+                {editId === expense.id ? (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-center">
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(event) => setAmount(event.target.value)}
+                      className="h-11 rounded-2xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-800"
+                    />
 
-                <select
-                  value={category}
-                  onChange={(ev) => setCategory(ev.target.value)}
-                  className="border p-2 rounded"
-                >
-                  <option>Food</option>
-                  <option>Travel</option>
-                  <option>Bills</option>
-                </select>
+                    <select
+                      value={category}
+                      onChange={(event) => setCategory(event.target.value)}
+                      className="h-11 rounded-2xl border border-slate-200 bg-slate-50 px-4 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-800"
+                    >
+                      <option>Food</option>
+                      <option>Travel</option>
+                      <option>Bills</option>
+                    </select>
 
-                <button
-                  onClick={saveEdit}
-                  className="text-green-500 font-semibold"
-                >
-                  Save
-                </button>
-              </>
-            ) : (
-              <>
-                <div>
-                  <p className="font-semibold">
-                    {getIcon(e.category)} {e.category}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    ₹{e.amount}
-                  </p>
-                </div>
+                    <button
+                      type="button"
+                      onClick={saveEdit}
+                      className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditId(null)}
+                      className="rounded-2xl bg-slate-100 px-4 py-2 font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-extrabold ${getAccent(expense.category)}`}>
+                        {expense.category?.slice(0, 1) || "S"}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate font-extrabold text-slate-950 dark:text-white">
+                          {expense.category}
+                        </p>
+                        <p className="text-sm font-semibold text-slate-500">
+                          Rs {Number(expense.amount || 0).toLocaleString("en-IN")}
+                        </p>
+                        <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                          <FaCalendarDays />
+                          {formatSubmittedAt(expense.createdAt)}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="space-x-3">
-                  <button
-                    onClick={() => startEdit(e)}
-                    className="text-blue-500"
-                  >
-                    Edit
-                  </button>
+                    <div className="flex gap-2 sm:justify-end">
+                      <button
+                        type="button"
+                        aria-label="Edit expense"
+                        onClick={() => startEdit(expense)}
+                        className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-100 px-4 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 sm:flex-none"
+                      >
+                        <FaPen /> Edit
+                      </button>
 
-                  <button
-                    onClick={() => deleteExpense(e.id)}
-                    className="text-red-500"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </motion.div>
-        ))
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
+                      <button
+                        type="button"
+                        aria-label="Delete expense"
+                        onClick={() => deleteExpense(expense.id)}
+                        className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-2xl bg-rose-50 px-4 text-sm font-bold text-rose-600 transition hover:bg-rose-100 sm:flex-none"
+                      >
+                        <FaTrash /> Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
       )}
-    </motion.div>
+    </section>
   );
 }

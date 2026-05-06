@@ -6,13 +6,31 @@ export async function apiRequest(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(options.headers || {}),
     },
     ...options,
   });
 
   if (!res.ok) {
-    throw new Error(`API Error: ${res.status}`);
+    let message = `API Error: ${res.status}`;
+    try {
+      const errorBody = await res.json();
+      message = errorBody.message || message;
+    } catch {
+      // Keep the status-based message when the API returns no JSON body.
+    }
+
+    throw new Error(message);
   }
 
-  return res.json();
+  if (res.status === 204) {
+    return null;
+  }
+
+  const text = await res.text();
+  if (!text) {
+    return null;
+  }
+
+  return JSON.parse(text);
 }

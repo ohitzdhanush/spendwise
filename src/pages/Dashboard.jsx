@@ -1,201 +1,54 @@
-<<<<<<< HEAD
-import { FaArrowTrendUp, FaCalendarDay, FaIndianRupeeSign, FaWallet } from "react-icons/fa6";
-import { motion } from "framer-motion";
-import ChartSection from "../components/ChartSection";
-import ExpenseForm from "../components/ExpenseForm";
-import ExpenseList from "../components/ExpenseList";
-import FilterBar from "../components/FilterBar";
-import LiveClock from "../components/LiveClock";
-import { MotionCard, MotionPage } from "../components/Motion";
-import { useExpense } from "../context/useExpense";
-import { riseIn, staggerContainer } from "../utils/motion";
-
-const currency = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-  maximumFractionDigits: 0,
-});
-
-function StatCard({ label, value, helper, icon: Icon }) {
-  return (
-    <MotionCard className="surface animated-panel p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-          <p className="mt-1 text-sm text-slate-500">{helper}</p>
-        </div>
-        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-cyan-50 text-cyan-700">
-          <Icon />
-        </div>
-      </div>
-    </MotionCard>
-  );
-}
-
-export default function Dashboard() {
-  const { expenses, filtered, error, loading, usingDemoData, refreshExpenses } = useExpense();
-  const total = filtered.reduce((sum, expense) => sum + expense.amount, 0);
-  const average = filtered.length ? total / filtered.length : 0;
-  const largest = filtered.reduce((max, expense) => Math.max(max, expense.amount), 0);
-  const today = new Date().toDateString();
-  const todayTotal = filtered
-    .filter((expense) => new Date(expense.date).toDateString() === today)
-    .reduce((sum, expense) => sum + expense.amount, 0);
-  const tickerItems = [
-    `${filtered.length} tracked`,
-    `${currency.format(total)} filtered`,
-    `${currency.format(average)} average`,
-    `${currency.format(largest)} largest`,
-  ];
-
-  return (
-    <MotionPage className="page-shell">
-      <motion.header
-        className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={riseIn}>
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            Personal finance
-          </p>
-          <h1 className="mt-2 text-3xl font-black tracking-normal text-slate-950 sm:text-4xl">
-            Spending Dashboard
-          </h1>
-          <p className="mt-2 max-w-2xl text-slate-600">
-            Track expenses, filter cash flow, and spot category patterns in one clean workspace.
-          </p>
-        </motion.div>
-        <motion.div className="flex flex-col gap-3 sm:items-end" variants={riseIn}>
-          <LiveClock compact />
-          <motion.button
-            type="button"
-            onClick={refreshExpenses}
-            className="btn-secondary"
-            disabled={loading}
-            whileTap={{ scale: 0.97 }}
-          >
-            Refresh
-          </motion.button>
-        </motion.div>
-      </motion.header>
-
-      <motion.div
-        className="surface mt-5 overflow-hidden px-4 py-3"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12 }}
-      >
-        <div className="ticker-lane flex w-max gap-3 text-sm font-bold text-slate-600">
-          {[...tickerItems, ...tickerItems].map((item, index) => (
-            <span
-              key={`${item}-${index}`}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </motion.div>
-
-      {(error || usingDemoData) && (
-        <motion.div
-          className="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {error}
-        </motion.div>
-      )}
-
-      <motion.section
-        className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <StatCard
-          label="Filtered Spend"
-          value={currency.format(total)}
-          helper={`${filtered.length} of ${expenses.length} transactions`}
-          icon={FaIndianRupeeSign}
-        />
-        <StatCard
-          label="Average Expense"
-          value={currency.format(average)}
-          helper="Based on current filters"
-          icon={FaArrowTrendUp}
-        />
-        <StatCard
-          label="Today"
-          value={currency.format(todayTotal)}
-          helper="Expenses logged today"
-          icon={FaCalendarDay}
-        />
-        <StatCard
-          label="Largest Entry"
-          value={currency.format(largest)}
-          helper="Highest single spend"
-          icon={FaWallet}
-        />
-      </motion.section>
-
-      <motion.section
-        className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <ExpenseForm />
-        <ChartSection expenses={filtered} compact />
-      </motion.section>
-
-      <motion.section
-        className="mt-6 space-y-4"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <FilterBar />
-        <ExpenseList limit={6} />
-      </motion.section>
-    </MotionPage>
-  );
-}
-=======
 import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { FaArrowTrendUp, FaReceipt, FaWallet } from "react-icons/fa6";
 import ExpenseForm from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
 import FilterBar from "../components/FilterBar";
 import { useExpense } from "../context/ExpenseContext";
 
 export default function Dashboard() {
-  const {
-    filtered,
-    fetchExpenses,
-    applyFilters,
-    filters,
-  } = useExpense();
+  const { filtered, fetchExpenses, applyFilters, filters } = useExpense();
 
-  // 🔹 FETCH ONLY HERE
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  // 🔹 APPLY FILTERS WHEN CHANGED
   useEffect(() => {
     applyFilters();
   }, [filters]);
 
-  const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+  const total = filtered.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const average = filtered.length ? Math.round(total / filtered.length) : 0;
+  const highest = filtered.reduce((max, e) => Math.max(max, Number(e.amount) || 0), 0);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+    <div className="space-y-5">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="overflow-hidden rounded-[2rem] bg-slate-950 p-5 text-white shadow-2xl shadow-slate-900/20 sm:p-7"
+      >
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">
+              Live summary
+            </p>
+            <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+              Track every rupee with clarity.
+            </h2>
+          </div>
+          <div className="rounded-3xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur">
+            <p className="text-sm text-slate-300">Filtered total</p>
+            <p className="text-3xl font-extrabold">Rs {total.toLocaleString("en-IN")}</p>
+          </div>
+        </div>
+      </motion.section>
 
-      <p className="text-xl mb-4">Total: ₹{total}</p>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard icon={<FaWallet />} label="Total spend" value={`Rs ${total.toLocaleString("en-IN")}`} />
+        <StatCard icon={<FaReceipt />} label="Transactions" value={filtered.length} />
+        <StatCard icon={<FaArrowTrendUp />} label="Highest entry" value={`Rs ${highest.toLocaleString("en-IN")}`} sub={`Avg Rs ${average.toLocaleString("en-IN")}`} />
+      </section>
 
       <ExpenseForm />
       <FilterBar />
@@ -203,4 +56,20 @@ export default function Dashboard() {
     </div>
   );
 }
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
+
+function StatCard({ icon, label, value, sub }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-3xl border border-white/80 bg-white/85 p-5 shadow-xl shadow-slate-900/5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
+    >
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+        {icon}
+      </div>
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className="mt-1 text-2xl font-extrabold text-slate-950 dark:text-white">{value}</p>
+      {sub ? <p className="mt-1 text-xs font-medium text-slate-400">{sub}</p> : null}
+    </motion.div>
+  );
+}

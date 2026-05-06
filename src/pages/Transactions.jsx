@@ -1,50 +1,37 @@
-<<<<<<< HEAD
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import ExpenseList from "../components/ExpenseList";
 import FilterBar from "../components/FilterBar";
-import { MotionPage } from "../components/Motion";
-import { useExpense } from "../context/useExpense";
-import { riseIn, staggerContainer } from "../utils/motion";
+import { useExpense } from "../context/ExpenseContext";
 
 export default function Transactions() {
-  const { filtered } = useExpense();
+  const { fetchExpenses, applyFilters, filters } = useExpense();
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters]);
 
   return (
-    <MotionPage className="page-shell">
-      <motion.header variants={staggerContainer} initial="initial" animate="animate">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-          Ledger
-        </p>
-        <motion.h1 variants={riseIn} className="mt-2 text-3xl font-black text-slate-950">
-          Transactions
-        </motion.h1>
-        <motion.p variants={riseIn} className="mt-2 text-slate-600">
-          Review, edit, and remove expenses with quick filters.
-        </motion.p>
-      </motion.header>
-
-      <motion.div
-        className="mt-6 space-y-4"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
+    <div className="space-y-5">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-[2rem] bg-white/90 p-5 shadow-xl shadow-slate-900/5 dark:bg-slate-900/85 sm:p-7"
       >
-        <FilterBar />
-        <motion.div variants={riseIn} className="text-sm font-semibold text-slate-500">
-          Showing {filtered.length} transaction{filtered.length === 1 ? "" : "s"}
-        </motion.div>
-        <ExpenseList />
-      </motion.div>
-    </MotionPage>
-  );
-}
-=======
-    export default function Transactions() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Transactions Page</h1>
-      <p>All your expenses will appear here.</p>
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-600">
+          Transactions
+        </p>
+        <h1 className="mt-2 text-3xl font-extrabold text-slate-950 dark:text-white">
+          All expense records
+        </h1>
+      </motion.section>
+
+      <FilterBar />
+      <ExpenseList />
     </div>
   );
 }
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

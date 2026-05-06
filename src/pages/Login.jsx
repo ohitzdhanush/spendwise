@@ -1,145 +1,12 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { FaArrowRight, FaWallet } from "react-icons/fa6";
-import { MotionPage } from "../components/Motion";
-import { useAuth } from "../context/useAuth";
-=======
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const result = login(email, password);
-
-    if (result.ok) {
-      navigate("/");
-      return;
-    }
-
-    setMessage(result.message);
-  };
-
-  return (
-    <MotionPage className="min-h-screen bg-slate-50">
-      <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="auth-motion-bg relative hidden overflow-hidden px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between">
-          <motion.div
-            className="float-soft absolute right-14 top-16 h-28 w-28 rounded-full border border-cyan-300/20 bg-cyan-300/10"
-            aria-hidden="true"
-          />
-          <motion.div
-            className="float-soft absolute bottom-28 left-12 h-20 w-20 rounded-full border border-indigo-300/20 bg-indigo-300/10"
-            aria-hidden="true"
-          />
-          <div className="relative flex items-center gap-3">
-            <motion.div
-              className="grid h-11 w-11 place-items-center rounded-lg bg-cyan-500"
-              whileHover={{ rotate: -8, scale: 1.06 }}
-            >
-              <FaWallet />
-            </motion.div>
-            <span className="text-xl font-black">SpendWise</span>
-          </div>
-          <motion.div
-            className="relative max-w-xl"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12, duration: 0.55 }}
-          >
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-200">
-              Smarter expense tracking
-            </p>
-            <h1 className="mt-4 text-5xl font-black leading-tight">
-              Know what you spend before the month surprises you.
-            </h1>
-            <p className="mt-5 text-lg text-slate-300">
-              A clean dashboard for daily expenses, category trends, and fast editing.
-            </p>
-          </motion.div>
-          <div className="relative grid grid-cols-3 gap-3">
-            {["Fast logging", "Visual insights", "Render ready"].map((item) => (
-              <motion.div
-                key={item}
-                className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm font-semibold backdrop-blur"
-                whileHover={{ y: -4, backgroundColor: "rgba(255,255,255,0.1)" }}
-              >
-                {item}
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        <section className="flex items-center justify-center px-4 py-10">
-          <motion.form
-            onSubmit={handleLogin}
-            className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl shadow-cyan-950/5"
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45 }}
-          >
-            <div className="mb-8 lg:hidden">
-              <div className="grid h-11 w-11 place-items-center rounded-lg bg-cyan-600 text-white">
-                <FaWallet />
-              </div>
-              <p className="mt-3 text-2xl font-black">SpendWise</p>
-            </div>
-            <h2 className="text-2xl font-black text-slate-950">Welcome back</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Sign in to open your expense workspace.
-            </p>
-
-            {message && (
-              <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
-                {message}
-              </div>
-            )}
-
-            <div className="mt-6 space-y-3">
-              <input
-                className="field"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                className="field"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="btn-primary mt-5 w-full">
-              Login
-              <FaArrowRight className="h-3.5 w-3.5" />
-            </button>
-
-            <p className="mt-5 text-center text-sm text-slate-500">
-              No account?{" "}
-              <Link to="/signup" className="font-bold text-cyan-700 hover:text-cyan-800">
-                Create one
-              </Link>
-            </p>
-          </motion.form>
-        </section>
-      </div>
-    </MotionPage>
-  );
-}
-=======
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -155,43 +22,80 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-80">
-        
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Welcome Back 👋
-        </h2>
+    <main className="animated-grid flex min-h-screen items-center justify-center bg-[#eef4f8] px-4 py-8">
+      <motion.section
+        initial={{ opacity: 0, y: 18, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-slate-900/15 lg:grid-cols-[1fr_0.9fr]"
+      >
+        <div className="hidden bg-slate-950 p-10 text-white lg:flex lg:flex-col lg:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="soft-shine flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500">
+              <FaWallet />
+            </div>
+            <span className="text-xl font-extrabold">SpendWise</span>
+          </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-3 border rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">
+              Welcome back
+            </p>
+            <h1 className="mt-3 text-4xl font-extrabold">
+              Your spending dashboard is ready.
+            </h1>
+            <p className="mt-4 text-slate-300">
+              Sign in to manage expenses, filters, transactions, and analytics from any screen size.
+            </p>
+          </div>
+        </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="p-6 sm:p-10">
+          <div className="mb-8 flex items-center gap-3 lg:hidden">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-white">
+              <FaWallet />
+            </div>
+            <span className="text-xl font-extrabold text-slate-950">SpendWise</span>
+          </div>
 
-        <button
-          onClick={handleLogin}
-          className="bg-blue-600 hover:bg-blue-700 text-white w-full p-3 rounded-lg transition"
-        >
-          Login
-        </button>
+          <h2 className="text-3xl font-extrabold text-slate-950">Login</h2>
+          <p className="mt-2 text-sm font-medium text-slate-500">
+            Continue to your expense workspace.
+          </p>
 
-        <p className="mt-4 text-sm text-center">
-          No account?{" "}
-          <Link to="/signup" className="text-blue-600 font-semibold">
-            Signup
-          </Link>
-        </p>
+          <div className="mt-8 space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              onChange={(event) => setEmail(event.target.value)}
+            />
 
-      </div>
-    </div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              onChange={(event) => setPassword(event.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={handleLogin}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
+            >
+              Login <FaArrowRight />
+            </button>
+          </div>
+
+          <p className="mt-6 text-center text-sm font-medium text-slate-500">
+            No account?{" "}
+            <Link to="/signup" className="font-extrabold text-emerald-700">
+              Create one
+            </Link>
+          </p>
+        </div>
+      </motion.section>
+    </main>
   );
 }
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

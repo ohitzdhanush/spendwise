@@ -1,40 +1,5 @@
-<<<<<<< HEAD
-import { motion } from "framer-motion";
-import ChartSection from "../components/ChartSection";
-import { MotionPage } from "../components/Motion";
-import { useExpense } from "../context/useExpense";
-import { riseIn, staggerContainer } from "../utils/motion";
-
-export default function Analytics() {
-  const { expenses } = useExpense();
-
-  return (
-    <MotionPage className="page-shell">
-      <motion.header variants={staggerContainer} initial="initial" animate="animate">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-          Insights
-        </p>
-        <motion.h1 variants={riseIn} className="mt-2 text-3xl font-black text-slate-950">
-          Analytics
-        </motion.h1>
-        <motion.p variants={riseIn} className="mt-2 max-w-2xl text-slate-600">
-          Understand where your money goes by category and recent activity.
-        </motion.p>
-      </motion.header>
-
-      <motion.div
-        className="mt-6"
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12 }}
-      >
-        <ChartSection expenses={expenses} />
-      </motion.div>
-    </MotionPage>
-  );
-}
-=======
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import ChartSection from "../components/ChartSection";
 import { useExpense } from "../context/ExpenseContext";
 
@@ -42,27 +7,46 @@ export default function Analytics() {
   const { fetchExpenses, expenses, loading } = useExpense();
 
   useEffect(() => {
-    fetchExpenses(); // ALWAYS fetch when opening analytics
+    fetchExpenses();
   }, []);
+
+  const total = expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
 
   if (loading) {
     return (
-      <div className="text-center mt-10 text-gray-400">
+      <div className="rounded-3xl border border-white/80 bg-white/85 p-8 text-center text-slate-500 shadow-xl shadow-slate-900/5">
         Loading analytics...
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Analytics</h1>
+    <div className="space-y-5">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-[2rem] bg-white/90 p-5 shadow-xl shadow-slate-900/5 dark:bg-slate-900/85 sm:p-7"
+      >
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-600">
+          Analytics
+        </p>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <h1 className="text-3xl font-extrabold text-slate-950 dark:text-white">
+            Spending patterns
+          </h1>
+          <p className="text-lg font-bold text-slate-600 dark:text-slate-300">
+            Rs {total.toLocaleString("en-IN")} total
+          </p>
+        </div>
+      </motion.section>
 
       {expenses.length === 0 ? (
-        <p className="text-gray-400">No data found</p>
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-8 text-center text-slate-500">
+          No data found.
+        </div>
       ) : (
         <ChartSection />
       )}
     </div>
   );
 }
->>>>>>> b572b5d293c95c88857c71d6bd80a58e68778879

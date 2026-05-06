@@ -2,9 +2,10 @@ package com.spendwise.web;
 
 import com.spendwise.model.Expense;
 import com.spendwise.repo.ExpenseRepository;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/expenses")
@@ -17,38 +18,57 @@ public class ExpenseController {
         this.repo = repo;
     }
 
-    // ✅ TEST API
     @GetMapping("/ping")
     public String ping() {
         return "OK";
     }
 
-    // ✅ GET ALL
     @GetMapping
-    public List<Expense> getAll() {
+    public List<Expense> getAll(@RequestParam(required = false) Long userId) {
+        if (userId != null) {
+            return repo.findByUserIdOrderByCreatedAtDesc(userId);
+        }
+
         return repo.findAll();
     }
 
-    // ✅ ADD
     @PostMapping
-    public Expense add(@RequestBody Expense expense) {
+    public Expense add(@RequestParam(required = false) Long userId, @RequestBody Expense expense) {
+        if (userId != null) {
+            expense.setUserId(userId);
+        }
+
         return repo.save(expense);
     }
 
-    // ✅ UPDATE
     @PutMapping("/{id}")
-    public Expense update(@PathVariable Long id, @RequestBody Expense updated) {
-        Expense exp = repo.findById(id).orElseThrow();
+    public Expense update(
+        @PathVariable Long id,
+        @RequestParam(required = false) Long userId,
+        @RequestBody Expense updated
+    ) {
+        Expense exp = findExpense(id, userId);
 
         exp.setAmount(updated.getAmount());
         exp.setCategory(updated.getCategory());
+        if (updated.getCreatedAt() != null) {
+            exp.setCreatedAt(updated.getCreatedAt());
+        }
 
         return repo.save(exp);
     }
 
-    // ✅ DELETE
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repo.deleteById(id);
+    public void delete(@PathVariable Long id, @RequestParam(required = false) Long userId) {
+        repo.delete(findExpense(id, userId));
+    }
+
+    private Expense findExpense(Long id, Long userId) {
+        if (userId != null) {
+            return repo.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        }
+
+        return repo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
