@@ -10,9 +10,14 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
-    const success = login(email, password);
+  const handleLogin = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    const success = await login(email, password);
+    setIsSubmitting(false);
 
     if (success) {
       navigate("/");
@@ -82,9 +87,10 @@ export default function Login() {
             <button
               type="button"
               onClick={handleLogin}
+              disabled={isSubmitting}
               className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
             >
-              Login <FaArrowRight />
+              {isSubmitting ? "Logging in..." : "Login"} <FaArrowRight />
             </button>
           </div>
 

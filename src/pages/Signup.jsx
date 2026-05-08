@@ -10,9 +10,14 @@ export default function Signup() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignup = () => {
-    const success = signup(email, password);
+  const handleSignup = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    const success = await signup(email, password);
+    setIsSubmitting(false);
 
     if (success) {
       navigate("/login");
@@ -63,9 +68,10 @@ export default function Signup() {
           <button
             type="button"
             onClick={handleSignup}
+            disabled={isSubmitting}
             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
           >
-            Create Account <FaArrowRight />
+            {isSubmitting ? "Creating account..." : "Create Account"} <FaArrowRight />
           </button>
         </div>
 
