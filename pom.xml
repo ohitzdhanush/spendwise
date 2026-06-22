@@ -48,6 +48,20 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
+        <!-- Firebase token verification for Google/email auth -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.4.3</version>
+        </dependency>
+
+        <!-- JWT verification for Firebase ID tokens without a private service account key -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.37.3</version>
+        </dependency>
+
         <!-- Optional: Lombok (uncomment if needed)
         <dependency>
             <groupId>org.projectlombok</groupId>

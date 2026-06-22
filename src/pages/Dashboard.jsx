@@ -4,14 +4,16 @@ import { FaArrowTrendUp, FaReceipt, FaWallet } from "react-icons/fa6";
 import ExpenseForm from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
 import FilterBar from "../components/FilterBar";
+import { useAuth } from "../context/AuthContext";
 import { useExpense } from "../context/ExpenseContext";
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const { filtered, fetchExpenses, applyFilters, filters } = useExpense();
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     applyFilters();

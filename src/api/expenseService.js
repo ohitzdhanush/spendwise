@@ -1,24 +1,22 @@
 import { apiRequest } from "./client";
 
-const userQuery = (userId) => `userId=${encodeURIComponent(userId)}`;
-
 export const ExpenseService = {
-  getAll: (userId) => apiRequest(`/expenses?${userQuery(userId)}`),
+  getAll: () => apiRequest("/expenses"),
 
-  create: (data, userId) =>
-    apiRequest(`/expenses?${userQuery(userId)}`, {
+  create: (data) =>
+    apiRequest("/expenses", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  update: (id, data, userId) =>
-    apiRequest(`/expenses/${id}?${userQuery(userId)}`, {
+  update: (id, data) =>
+    apiRequest(`/expenses/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
-  remove: (id, userId) =>
-    apiRequest(`/expenses/${id}?${userQuery(userId)}`, {
+  remove: (id) =>
+    apiRequest(`/expenses/${id}`, {
       method: "DELETE",
     }),
 };

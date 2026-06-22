@@ -1,11 +1,16 @@
+import { getAuthToken } from "./authToken";
+
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://spendwise-eds9.onrender.com";
 
 export async function apiRequest(path, options = {}) {
+  const token = await getAuthToken();
+
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     ...options,

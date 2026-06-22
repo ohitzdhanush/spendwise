@@ -18,6 +18,7 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+.env
 
 # Java build output
 build/

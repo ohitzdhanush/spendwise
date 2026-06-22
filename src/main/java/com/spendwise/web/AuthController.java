@@ -13,10 +13,18 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AppUserRepository users;
+    private final FirebaseTokenService firebaseTokenService;
+    private final CurrentUserService currentUserService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthController(AppUserRepository users) {
+    public AuthController(
+        AppUserRepository users,
+        FirebaseTokenService firebaseTokenService,
+        CurrentUserService currentUserService
+    ) {
         this.users = users;
+        this.firebaseTokenService = firebaseTokenService;
+        this.currentUserService = currentUserService;
     }
 
     @PostMapping("/signup")
@@ -40,9 +48,26 @@ public class AuthController {
         String email = normalizeEmail(request.email());
 
         return users.findByEmail(email)
+            .filter(user -> user.getPasswordHash() != null)
             .filter(user -> passwordEncoder.matches(request.password(), user.getPasswordHash()))
             .<ResponseEntity<?>>map(user -> ResponseEntity.ok(toResponse(user)))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid credentials")));
+    }
+
+    @PostMapping("/firebase")
+    public ResponseEntity<?> firebaseLogin(@RequestBody FirebaseAuthRequest request) {
+        if (request.idToken() == null || request.idToken().isBlank()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Firebase ID token is required"));
+        }
+
+        try {
+            FirebaseTokenService.FirebasePrincipal token = firebaseTokenService.verify(request.idToken());
+            return ResponseEntity.ok(toResponse(currentUserService.syncFirebaseUser(token)));
+        } catch (IllegalArgumentException error) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(error.getMessage()));
+        } catch (IllegalStateException error) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(error.getMessage()));
+        }
     }
 
     private String normalizeEmail(String email) {
@@ -50,12 +75,14 @@ public class AuthController {
     }
 
     private AuthUserResponse toResponse(AppUser user) {
-        return new AuthUserResponse(user.getId(), user.getEmail());
+        return new AuthUserResponse(user.getId(), user.getEmail(), user.getDisplayName(), user.getPhotoUrl());
     }
 
     public record AuthRequest(String email, String password) {}
 
-    public record AuthUserResponse(Long id, String email) {}
+    public record FirebaseAuthRequest(String idToken) {}
+
+    public record AuthUserResponse(Long id, String email, String displayName, String photoUrl) {}
 
     public record ErrorResponse(String message) {}
 }

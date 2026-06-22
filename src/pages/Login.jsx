@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaArrowRight, FaWallet } from "react-icons/fa6";
+import { FaArrowRight, FaGoogle, FaWallet } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -23,6 +23,20 @@ export default function Login() {
       navigate("/");
     } else {
       alert("Invalid credentials");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    const success = await loginWithGoogle();
+    setIsSubmitting(false);
+
+    if (success) {
+      navigate("/");
+    } else {
+      alert("Google login failed. Please check Firebase setup and try again.");
     }
   };
 
@@ -91,6 +105,16 @@ export default function Login() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
             >
               {isSubmitting ? "Logging in..." : "Login"} <FaArrowRight />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isSubmitting}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 font-extrabold text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50"
+            >
+              <FaGoogle className="text-emerald-600" />
+              Continue with Google
             </button>
           </div>
 

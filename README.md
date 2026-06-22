@@ -16,3 +16,26 @@ The React Compiler is not enabled on this template because of its impact on dev 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
 LIVE LINK: https://spendwise-dk.vercel.app/login
+
+## Firebase login setup
+
+Create a Firebase project, enable Authentication, then turn on Email/Password and Google providers.
+
+Add the web app config values to the frontend environment:
+
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+```
+
+Add a Firebase service account to the backend environment so Spring can verify Firebase ID tokens before saving users to the database:
+
+```env
+FIREBASE_PROJECT_ID=...
+```
+
+The backend verifies Firebase ID tokens against Google’s public certs, so it only needs the Firebase project id.

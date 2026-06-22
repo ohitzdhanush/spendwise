@@ -12,4 +12,10 @@ export const AuthService = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  firebaseLogin: (idToken) =>
+    apiRequest("/auth/firebase", {
+      method: "POST",
+      body: JSON.stringify({ idToken }),
+    }),
 };

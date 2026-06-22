@@ -42,7 +42,7 @@ export function ExpenseProvider({ children }) {
 
     setLoading(true);
     try {
-      const data = await ExpenseService.getAll(user.id);
+      const data = await ExpenseService.getAll();
       setExpenses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
@@ -56,7 +56,7 @@ export function ExpenseProvider({ children }) {
     if (!user?.id) return;
 
     try {
-      const saved = await ExpenseService.create(expense, user.id);
+      const saved = await ExpenseService.create(expense);
       setExpenses((current) => [saved, ...current]);
       toast.success("Expense added");
     } catch (error) {
@@ -69,7 +69,7 @@ export function ExpenseProvider({ children }) {
     if (!user?.id) return;
 
     try {
-      const saved = await ExpenseService.update(id, expense, user.id);
+      const saved = await ExpenseService.update(id, expense);
       setExpenses((current) =>
         current.map((item) => (item.id === id ? saved : item))
       );
@@ -84,7 +84,7 @@ export function ExpenseProvider({ children }) {
     if (!user?.id) return;
 
     try {
-      await ExpenseService.remove(id, user.id);
+      await ExpenseService.remove(id);
       setExpenses((current) => current.filter((item) => item.id !== id));
       toast.success("Expense deleted");
     } catch (error) {
