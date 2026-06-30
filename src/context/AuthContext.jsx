@@ -3,6 +3,7 @@ import { AuthService } from "../api/authService";
 import { setAuthTokenProvider } from "../api/authToken";
 import {
   auth,
+  authPersistenceReady,
   createUserWithEmailAndPassword,
   getRedirectResult,
   googleProvider,
@@ -54,6 +55,10 @@ export function AuthProvider({ children }) {
       return;
     }
 
+    authPersistenceReady.catch((error) => {
+      console.error(error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         return;
@@ -66,7 +71,8 @@ export function AuthProvider({ children }) {
       }
     });
 
-    getRedirectResult(auth)
+    authPersistenceReady
+      .then(() => getRedirectResult(auth))
       .then(async (result) => {
         if (result?.user) {
           await syncFirebaseUser(result.user);
@@ -85,6 +91,7 @@ export function AuthProvider({ children }) {
         throw new Error("Firebase is not configured");
       }
 
+      await authPersistenceReady;
       const credentials = await createUserWithEmailAndPassword(
         auth,
         email.trim().toLowerCase(),
@@ -104,6 +111,7 @@ export function AuthProvider({ children }) {
         throw new Error("Firebase is not configured");
       }
 
+      await authPersistenceReady;
       const credentials = await signInWithEmailAndPassword(
         auth,
         email.trim().toLowerCase(),
@@ -123,6 +131,7 @@ export function AuthProvider({ children }) {
         throw new Error("Firebase is not configured");
       }
 
+      await authPersistenceReady;
       await signInWithRedirect(auth, googleProvider);
       return true;
     } catch (error) {
