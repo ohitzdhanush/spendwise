@@ -43,6 +43,14 @@ const writeLocal = (uid, expenses) => {
 
 const getExpensesCollection = (uid) => collection(db, "users", uid, "expenses");
 
+const withTimeout = (promise, message) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error(message)), 5000);
+    }),
+  ]);
+
 export const ExpenseService = {
   getAll: async () => {
     const user = getUser();
@@ -53,9 +61,9 @@ export const ExpenseService = {
     }
 
     try {
-      const snapshot = await getDocs(
+      const snapshot = await withTimeout(getDocs(
         query(getExpensesCollection(user.uid), orderBy("createdAt", "desc")),
-      );
+      ), "Firestore load timed out");
       return snapshot.docs.map((item) => normalizeExpense(item.id, item.data()));
     } catch (error) {
       console.warn("Using local expense storage because Firestore is unavailable.", error);
@@ -74,11 +82,14 @@ export const ExpenseService = {
 
     if (isFirebaseConfigured && db) {
       try {
-        const created = await addDoc(getExpensesCollection(user.uid), {
-          amount: expense.amount,
-          category: expense.category,
-          createdAt: expense.createdAt,
-        });
+        const created = await withTimeout(
+          addDoc(getExpensesCollection(user.uid), {
+            amount: expense.amount,
+            category: expense.category,
+            createdAt: expense.createdAt,
+          }),
+          "Firestore save timed out",
+        );
         return { ...expense, id: created.id };
       } catch (error) {
         console.warn("Saving expense locally because Firestore is unavailable.", error);
@@ -101,7 +112,10 @@ export const ExpenseService = {
 
     if (isFirebaseConfigured && db) {
       try {
-        await updateDoc(doc(db, "users", user.uid, "expenses", id), updates);
+        await withTimeout(
+          updateDoc(doc(db, "users", user.uid, "expenses", id), updates),
+          "Firestore update timed out",
+        );
         const current = await ExpenseService.getAll();
         return current.find((expense) => expense.id === id) || { id, ...updates };
       } catch (error) {
@@ -122,7 +136,10 @@ export const ExpenseService = {
 
     if (isFirebaseConfigured && db) {
       try {
-        await deleteDoc(doc(db, "users", user.uid, "expenses", id));
+        await withTimeout(
+          deleteDoc(doc(db, "users", user.uid, "expenses", id)),
+          "Firestore delete timed out",
+        );
         return;
       } catch (error) {
         console.warn("Deleting local expense because Firestore is unavailable.", error);
