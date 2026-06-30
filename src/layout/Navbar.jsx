@@ -37,6 +37,7 @@ export default function Navbar({ dark, setDark }) {
           </button>
           <button
             type="button"
+            aria-label="Logout"
             onClick={handleLogout}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-rose-500 px-4 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition hover:-translate-y-0.5 hover:bg-rose-600"
           >
