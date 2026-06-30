@@ -4,10 +4,11 @@ import { setAuthTokenProvider } from "../api/authToken";
 import {
   auth,
   createUserWithEmailAndPassword,
+  getRedirectResult,
   googleProvider,
   isFirebaseConfigured,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from "../firebase";
 
@@ -16,6 +17,19 @@ const STORAGE_KEY = "currentUser";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+
+  const syncFirebaseUser = async (firebaseUser) => {
+    if (!isFirebaseConfigured || !firebaseUser) {
+      throw new Error("Firebase is not configured");
+    }
+
+    const idToken = await firebaseUser.getIdToken();
+    const appUser = await AuthService.firebaseLogin(idToken);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appUser));
+    setUser(appUser);
+    return appUser;
+  };
 
   useEffect(() => {
     setAuthTokenProvider(async () => {
@@ -34,20 +48,21 @@ export function AuthProvider({ children }) {
     } catch {
       setUser(null);
     }
-  }, []);
 
-  const syncFirebaseUser = async (firebaseUser) => {
-    if (!isFirebaseConfigured || !firebaseUser) {
-      throw new Error("Firebase is not configured");
+    if (!isFirebaseConfigured) {
+      return;
     }
 
-    const idToken = await firebaseUser.getIdToken();
-    const appUser = await AuthService.firebaseLogin(idToken);
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appUser));
-    setUser(appUser);
-    return appUser;
-  };
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          await syncFirebaseUser(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const signup = async (email, password) => {
     try {
@@ -93,8 +108,7 @@ export function AuthProvider({ children }) {
         throw new Error("Firebase is not configured");
       }
 
-      const credentials = await signInWithPopup(auth, googleProvider);
-      await syncFirebaseUser(credentials.user);
+      await signInWithRedirect(auth, googleProvider);
       return true;
     } catch (error) {
       console.error(error);

@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaArrowRight, FaGoogle, FaWallet } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { login, loginWithGoogle } = useAuth();
+  const { user, login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [navigate, user]);
 
   const handleLogin = async () => {
     if (isSubmitting) return;
@@ -34,7 +40,7 @@ export default function Login() {
     setIsSubmitting(false);
 
     if (success) {
-      navigate("/");
+      return;
     } else {
       alert("Google login failed. Please check Firebase setup and try again.");
     }
