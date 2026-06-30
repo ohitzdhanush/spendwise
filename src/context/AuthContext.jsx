@@ -7,6 +7,7 @@ import {
   getRedirectResult,
   googleProvider,
   isFirebaseConfigured,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithRedirect,
   signOut,
@@ -53,6 +54,18 @@ export function AuthProvider({ children }) {
       return;
     }
 
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        return;
+      }
+
+      try {
+        await syncFirebaseUser(firebaseUser);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) {
@@ -62,6 +75,8 @@ export function AuthProvider({ children }) {
       .catch((error) => {
         console.error(error);
       });
+
+    return unsubscribe;
   }, []);
 
   const signup = async (email, password) => {

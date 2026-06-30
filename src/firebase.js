@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   getRedirectResult,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithRedirect,
   signOut,
@@ -38,6 +39,7 @@ export const googleProvider = app ? new GoogleAuthProvider() : null;
 export {
   createUserWithEmailAndPassword,
   getRedirectResult,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithRedirect,
   signOut,
