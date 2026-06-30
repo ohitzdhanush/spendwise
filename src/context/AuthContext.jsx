@@ -10,6 +10,7 @@ import {
   isFirebaseConfigured,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signInWithRedirect,
   signOut,
 } from "../firebase";
@@ -132,8 +133,18 @@ export function AuthProvider({ children }) {
       }
 
       await authPersistenceReady;
-      await signInWithRedirect(auth, googleProvider);
-      return true;
+      try {
+        const credentials = await signInWithPopup(auth, googleProvider);
+        await syncFirebaseUser(credentials.user);
+        return true;
+      } catch (error) {
+        if (error?.code === "auth/popup-blocked" || error?.code === "auth/popup-closed-by-user") {
+          await signInWithRedirect(auth, googleProvider);
+          return true;
+        }
+
+        throw error;
+      }
     } catch (error) {
       console.error(error);
       return false;
