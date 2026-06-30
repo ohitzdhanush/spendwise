@@ -10,7 +10,8 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingAction, setSubmittingAction] = useState("");
+  const isSubmitting = Boolean(submittingAction);
 
   useEffect(() => {
     if (user) {
@@ -21,28 +22,33 @@ export default function Login() {
   const handleLogin = async () => {
     if (isSubmitting) return;
 
-    setIsSubmitting(true);
+    if (!email.trim() || !password) {
+      alert("Enter your email and password");
+      return;
+    }
+
+    setSubmittingAction("email");
     const success = await login(email, password);
-    setIsSubmitting(false);
+    setSubmittingAction("");
 
     if (success) {
       navigate("/");
     } else {
-      alert("Invalid credentials");
+      alert("Email login failed. Check the account details or create an account first.");
     }
   };
 
   const handleGoogleLogin = async () => {
     if (isSubmitting) return;
 
-    setIsSubmitting(true);
+    setSubmittingAction("google");
     const success = await loginWithGoogle();
-    setIsSubmitting(false);
+    setSubmittingAction("");
 
     if (success) {
-      return;
+      navigate("/");
     } else {
-      alert("Google login failed. Please check Firebase setup and try again.");
+      alert("Google login failed. Allow popups for this site and try again.");
     }
   };
 
@@ -110,7 +116,7 @@ export default function Login() {
               disabled={isSubmitting}
               className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-4 font-extrabold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-emerald-600"
             >
-              {isSubmitting ? "Logging in..." : "Login"} <FaArrowRight />
+              {submittingAction === "email" ? "Logging in..." : "Login"} <FaArrowRight />
             </button>
 
             <button
@@ -120,7 +126,7 @@ export default function Login() {
               className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 font-extrabold text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50"
             >
               <FaGoogle className="text-emerald-600" />
-              Continue with Google
+              {submittingAction === "google" ? "Opening Google..." : "Continue with Google"}
             </button>
           </div>
 

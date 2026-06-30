@@ -1,11 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { AuthService } from "../api/authService";
 import { setAuthTokenProvider } from "../api/authToken";
 import {
   auth,
   authPersistenceReady,
   createUserWithEmailAndPassword,
-  getRedirectResult,
   googleProvider,
   isFirebaseConfigured,
   onAuthStateChanged,
@@ -17,6 +15,14 @@ import {
 const AuthContext = createContext();
 const STORAGE_KEY = "currentUser";
 
+const createAppUser = (firebaseUser) => ({
+  id: firebaseUser.uid,
+  firebaseUid: firebaseUser.uid,
+  email: firebaseUser.email || "",
+  name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "SpendWise User",
+  photoURL: firebaseUser.photoURL || "",
+});
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
@@ -25,9 +31,7 @@ export function AuthProvider({ children }) {
       throw new Error("Firebase is not configured");
     }
 
-    const idToken = await firebaseUser.getIdToken();
-    const appUser = await AuthService.firebaseLogin(idToken);
-
+    const appUser = createAppUser(firebaseUser);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appUser));
     setUser(appUser);
     return appUser;
@@ -70,17 +74,6 @@ export function AuthProvider({ children }) {
         console.error(error);
       }
     });
-
-    authPersistenceReady
-      .then(() => getRedirectResult(auth))
-      .then(async (result) => {
-        if (result?.user) {
-          await syncFirebaseUser(result.user);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
 
     return unsubscribe;
   }, []);

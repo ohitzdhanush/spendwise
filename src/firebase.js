@@ -4,13 +4,23 @@ import {
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   getAuth,
-  getRedirectResult,
   onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -36,6 +46,7 @@ export const isFirebaseConfigured = missingConfigKeys.length === 0;
 const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 
 export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
 export const googleProvider = app ? new GoogleAuthProvider() : null;
 export const authPersistenceReady = auth
   ? setPersistence(auth, browserLocalPersistence)
@@ -43,10 +54,17 @@ export const authPersistenceReady = auth
 
 export {
   createUserWithEmailAndPassword,
-  getRedirectResult,
   onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
 };
